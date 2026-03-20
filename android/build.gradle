@@ -16,3 +16,9 @@ android {
     abortOnError false
   }
 }
+
+dependencies {
+  // Spline 3D runtime — required to compile ReactNativeSplineView.kt
+  // Hosted on Maven Central: https://central.sonatype.com/artifact/design.spline/spline-runtime/overview
+  implementation("design.spline:spline-runtime:+")
+}

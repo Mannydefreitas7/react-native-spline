@@ -13,7 +13,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.spline.example"
+      "bundleIdentifier": "expo.modules.spline.example",
+      "deploymentTarget": "16.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +28,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": ["../app.plugin.js"]
   }
 }

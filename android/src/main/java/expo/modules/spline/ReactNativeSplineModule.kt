@@ -1,50 +1,87 @@
 package expo.modules.spline
 
+import design.spline.runtime.SplineEventName
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
 
 class ReactNativeSplineModule : Module() {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  /// Reference to the most recently mounted SplineView for imperative API calls.
+  private var activeView: ReactNativeSplineView? = null
+
   override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ReactNativeSpline')` in JavaScript.
     Name("ReactNativeSpline")
 
-    // Defines constant property on the module.
-    Constant("PI") {
-      Math.PI
+    // ── Imperative Spline API ─────────────────────────────────────────────────
+
+    Function("emitEvent") { eventName: String, nameOrUUID: String ->
+      activeView?.splineView?.emitEvent(splineEvent(eventName), nameOrUUID)
     }
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
+    Function("emitEventReverse") { eventName: String, nameOrUUID: String ->
+      activeView?.splineView?.emitEventReverse(splineEvent(eventName), nameOrUUID)
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
+    Function("setZoom") { zoom: Float ->
+      activeView?.splineView?.setZoom(zoom)
     }
 
-    // Enables the module to be used as a native view. Definition components that are accepted as part of
-    // the view definition: Prop, Events.
+    Function("setNumberVariable") { name: String, value: Float ->
+      activeView?.splineView?.setNumberVariable(name, value)
+    }
+
+    Function("setBoolVariable") { name: String, value: Boolean ->
+      activeView?.splineView?.setBooleanVariable(name, value)
+    }
+
+    Function("setStringVariable") { name: String, value: String ->
+      activeView?.splineView?.setStringVariable(name, value)
+    }
+
+    AsyncFunction("getNumberVariable") { name: String ->
+      activeView?.splineView?.getNumberVariable(name)
+    }
+
+    AsyncFunction("getBoolVariable") { name: String ->
+      activeView?.splineView?.getBooleanVariable(name)
+    }
+
+    AsyncFunction("getStringVariable") { name: String ->
+      activeView?.splineView?.getStringVariable(name)
+    }
+
+    Function("stop") {
+      activeView?.splineView?.stop()
+    }
+
+    Function("play") {
+      activeView?.splineView?.play()
+    }
+
+    // ── View definition ───────────────────────────────────────────────────────
+
     View(ReactNativeSplineView::class) {
-      // Defines a setter for the `url` prop.
       Prop("url") { view: ReactNativeSplineView, url: URL ->
-        view.webView.loadUrl(url.toString())
+        activeView = view
+        view.loadUrl(url.toString())
       }
-      // Defines an event that the view can send to JavaScript.
-      Events("onLoad")
+
+      Events("onLoad", "onSplineEvent")
     }
+  }
+
+  // MARK: - Helpers
+
+  private fun splineEvent(name: String): SplineEventName = when (name) {
+    "mouseDown"  -> SplineEventName.mouseDown
+    "mousePress" -> SplineEventName.mousePress
+    "mouseHover" -> SplineEventName.mouseHover
+    "keyUp"      -> SplineEventName.keyUp
+    "keyDown"    -> SplineEventName.keyDown
+    "keyPress"   -> SplineEventName.keyPress
+    "start"      -> SplineEventName.start
+    "lookAt"     -> SplineEventName.lookAt
+    "follow"     -> SplineEventName.follow
+    else         -> SplineEventName.mouseUp
   }
 }

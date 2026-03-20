@@ -1,48 +1,103 @@
 import ExpoModulesCore
+import SplineRuntime
 
 public class ReactNativeSplineModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  /// Weak reference to the most recently mounted SplineView.
+  /// Used to forward imperative API calls (emitEvent, setZoom, etc.) to the active scene.
+  private weak var activeView: ReactNativeSplineView?
+
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ReactNativeSpline')` in JavaScript.
     Name("ReactNativeSpline")
 
-    // Defines constant property on the module.
-    Constant("PI") {
-      Double.pi
+    // ── Imperative Spline Controller API ────────────────────────────────────
+
+    Function("emitEvent") { (eventName: String, nameOrUUID: String) in
+      self.withController { controller in
+        controller.emitEvent(self.splineEvent(eventName), nameOrUUID: nameOrUUID)
+      }
     }
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
+    Function("emitEventReverse") { (eventName: String, nameOrUUID: String) in
+      self.withController { controller in
+        controller.emitEventReverse(self.splineEvent(eventName), nameOrUUID: nameOrUUID)
+      }
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
+    Function("setZoom") { (zoom: Float) in
+      self.withController { controller in
+        controller.setZoom(zoom)
+      }
     }
 
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
+    Function("setNumberVariable") { (name: String, value: Float) in
+      self.withController { controller in
+        controller.setNumberVariable(name: name, value: value)
+      }
+    }
+
+    Function("setBoolVariable") { (name: String, value: Bool) in
+      self.withController { controller in
+        controller.setBoolVariable(name: name, value: value)
+      }
+    }
+
+    Function("setStringVariable") { (name: String, value: String) in
+      self.withController { controller in
+        controller.setStringVariable(name: name, value: value)
+      }
+    }
+
+    AsyncFunction("getNumberVariable") { (name: String) -> Float? in
+      self.activeView?.controller.getNumberVariable(name: name)
+    }
+
+    AsyncFunction("getBoolVariable") { (name: String) -> Bool? in
+      self.activeView?.controller.getBoolVariable(name: name)
+    }
+
+    AsyncFunction("getStringVariable") { (name: String) -> String? in
+      self.activeView?.controller.getStringVariable(name: name)
+    }
+
+    Function("stop") {
+      self.withController { $0.stop() }
+    }
+
+    Function("play") {
+      self.withController { $0.play() }
+    }
+
+    // ── View definition ──────────────────────────────────────────────────────
+
     View(ReactNativeSplineView.self) {
-      // Defines a setter for the `url` prop.
       Prop("url") { (view: ReactNativeSplineView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
-        }
+        self.activeView = view
+        view.loadScene(url: url)
       }
 
-      Events("onLoad")
+      Events("onLoad", "onSplineEvent")
+    }
+  }
+
+  // MARK: - Helpers
+
+  private func withController(_ block: (SplineController) -> Void) {
+    guard let controller = activeView?.controller else { return }
+    block(controller)
+  }
+
+  private func splineEvent(_ name: String) -> SplineEventName {
+    switch name {
+    case "mouseDown":  return .mouseDown
+    case "mousePress": return .mousePress
+    case "mouseHover": return .mouseHover
+    case "keyUp":      return .keyUp
+    case "keyDown":    return .keyDown
+    case "keyPress":   return .keyPress
+    case "start":      return .start
+    case "lookAt":     return .lookAt
+    case "follow":     return .follow
+    default:           return .mouseUp
     }
   }
 }

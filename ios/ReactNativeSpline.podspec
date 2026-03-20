@@ -10,9 +10,9 @@ Pod::Spec.new do |s|
   s.license        = package['license']
   s.author         = package['author']
   s.homepage       = package['homepage']
+  # SplineRuntime requires iOS 16+. tvOS is not supported by SplineRuntime.
   s.platforms      = {
-    :ios => '15.1',
-    :tvos => '15.1'
+    :ios => '16.0'
   }
   s.swift_version  = '5.9'
   s.source         = { git: 'https://github.com/Mannydefreitas7/react-native-spline' }

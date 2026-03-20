@@ -9,6 +9,9 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
+    "lint": "biome check .",
+    "lint:fix": "biome check --apply .",
+    "format": "biome format --write .",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
@@ -16,10 +19,13 @@
     "open:android": "open -a \"Android Studio\" example/android"
   },
   "keywords": [
-    "react-native",
     "expo",
-    "react-native-spline",
-    "ReactNativeSpline"
+    "expo-module",
+    "spline",
+    "3d",
+    "react-native",
+    "ios",
+    "android"
   ],
   "repository": "https://github.com/Mannydefreitas7/react-native-spline",
   "bugs": {
@@ -28,16 +34,26 @@
   "author": "Emmanuel De Freitas <manny.defreitas7@me.com> (https://github.com/Mannydefreitas7)",
   "license": "MIT",
   "homepage": "https://github.com/Mannydefreitas7/react-native-spline#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@types/react": "~19.1.1",
-    "expo-module-scripts": "^55.0.2",
+    "@types/react": "~19.2.14",
     "expo": "^55.0.8",
-    "react-native": "0.82.1"
+    "react-native": "0.82.1",
+    "@biomejs/biome": "^2.4.8",
+    "expo-module-scripts": "^55.0.2",
+    "jest": "^30.3.0",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "expo": "*",
     "react": "*",
     "react-native": "*"
+  },
+  "dependencies": {
+    "@expo/config-plugins": "55.0.7"
+  },
+  "expo": {
+    "fyi": {
+      "ios.spm": "SplineRuntime must be added via the config plugin. See README."
+    }
   }
 }

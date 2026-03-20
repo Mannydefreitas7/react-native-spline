@@ -1,40 +1,18 @@
 import { useEvent } from 'expo';
-import ReactNativeSpline, { ReactNativeSplineView } from 'react-native-spline';
+import { ReactNativeSplineView, ReactNativeSpline } from 'react-native-spline';
 import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 export default function App() {
-  const onChangePayload = useEvent(ReactNativeSpline, 'onChange');
+
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        <Group name="Constants">
-          <Text>{ReactNativeSpline.PI}</Text>
-        </Group>
-        <Group name="Functions">
-          <Text>{ReactNativeSpline.hello()}</Text>
-        </Group>
-        <Group name="Async functions">
-          <Button
-            title="Set value"
-            onPress={async () => {
-              await ReactNativeSpline.setValueAsync('Hello from JS!');
-            }}
-          />
-        </Group>
-        <Group name="Events">
-          <Text>{onChangePayload?.value}</Text>
-        </Group>
-        <Group name="Views">
-          <ReactNativeSplineView
-            url="https://www.example.com"
-            onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
-            style={styles.view}
-          />
-        </Group>
-      </ScrollView>
-    </SafeAreaView>
+    <ReactNativeSplineView
+      url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
+      onSplineEvent={console.log}
+
+      onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
+      style={styles.view}
+    />
   );
 }
 
