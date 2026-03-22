@@ -12,59 +12,49 @@ public class ReactNativeSplineModule: Module {
     // ── Imperative Spline Controller API ────────────────────────────────────
 
     Function("emitEvent") { (eventName: String, nameOrUUID: String) in
-      self.withController { controller in
-        controller.emitEvent(self.splineEvent(eventName), nameOrUUID: nameOrUUID)
-      }
+      let event = self.splineEvent(eventName)
+      DispatchQueue.main.async { self.withController { $0.emitEvent(event, nameOrUUID: nameOrUUID) } }
     }
 
     Function("emitEventReverse") { (eventName: String, nameOrUUID: String) in
-      self.withController { controller in
-        controller.emitEventReverse(self.splineEvent(eventName), nameOrUUID: nameOrUUID)
-      }
+      let event = self.splineEvent(eventName)
+      DispatchQueue.main.async { self.withController { $0.emitEventReverse(event, nameOrUUID: nameOrUUID) } }
     }
 
     Function("setZoom") { (zoom: Float) in
-      self.withController { controller in
-        controller.setZoom(zoom)
-      }
+      DispatchQueue.main.async { self.withController { $0.setZoom(zoom) } }
     }
 
     Function("setNumberVariable") { (name: String, value: Float) in
-      self.withController { controller in
-        controller.setNumberVariable(name: name, value: value)
-      }
+      DispatchQueue.main.async { self.withController { $0.setNumberVariable(name: name, value: value) } }
     }
 
     Function("setBoolVariable") { (name: String, value: Bool) in
-      self.withController { controller in
-        controller.setBoolVariable(name: name, value: value)
-      }
+      DispatchQueue.main.async { self.withController { $0.setBoolVariable(name: name, value: value) } }
     }
 
     Function("setStringVariable") { (name: String, value: String) in
-      self.withController { controller in
-        controller.setStringVariable(name: name, value: value)
-      }
+      DispatchQueue.main.async { self.withController { $0.setStringVariable(name: name, value: value) } }
     }
 
     AsyncFunction("getNumberVariable") { (name: String) -> Float? in
-      self.activeView?.controller.getNumberVariable(name: name)
+      await MainActor.run { self.activeView?.controller.getNumberVariable(name: name) }
     }
 
     AsyncFunction("getBoolVariable") { (name: String) -> Bool? in
-      self.activeView?.controller.getBoolVariable(name: name)
+      await MainActor.run { self.activeView?.controller.getBoolVariable(name: name) }
     }
 
     AsyncFunction("getStringVariable") { (name: String) -> String? in
-      self.activeView?.controller.getStringVariable(name: name)
+      await MainActor.run { self.activeView?.controller.getStringVariable(name: name) }
     }
 
     Function("stop") {
-      self.withController { $0.stop() }
+      DispatchQueue.main.async { self.withController { $0.stop() } }
     }
 
     Function("play") {
-      self.withController { $0.play() }
+      DispatchQueue.main.async { self.withController { $0.play() } }
     }
 
     // ── View definition ──────────────────────────────────────────────────────
@@ -88,6 +78,7 @@ public class ReactNativeSplineModule: Module {
 
   private func splineEvent(_ name: String) -> SplineEventName {
     switch name {
+    case "mouseUp":    return .mouseUp
     case "mouseDown":  return .mouseDown
     case "mousePress": return .mousePress
     case "mouseHover": return .mouseHover
@@ -97,7 +88,9 @@ public class ReactNativeSplineModule: Module {
     case "start":      return .start
     case "lookAt":     return .lookAt
     case "follow":     return .follow
-    default:           return .mouseUp
+    default:
+      print("[ReactNativeSpline] unknown event name '\(name)', ignoring")
+      return .mouseUp
     }
   }
 }

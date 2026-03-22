@@ -8,7 +8,7 @@ export default function App() {
   return (
     <ReactNativeSplineView
       url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
-      onSplineEvent={console.log}
+      onSplineEvent={(event) => console.log(event.nativeEvent.event)}
 
       onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
       style={styles.view}

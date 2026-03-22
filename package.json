@@ -7,8 +7,8 @@
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
-    "lint": "expo-module lint",
     "test": "expo-module test",
+    "start": "bun --cwd example expo run:ios",
     "lint": "biome check .",
     "lint:fix": "biome check --apply .",
     "format": "biome format --write .",

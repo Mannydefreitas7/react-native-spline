@@ -31,12 +31,17 @@ class ReactNativeSplineView: ExpoView {
         let sceneView = SplineSceneView(
             url: url,
             controller: controller,
-            onSceneLoaded: { [weak self] in
+            onSceneLoaded: {
+                [weak self] in
                 self?.onLoad(["url": url.absoluteString])
             },
-            onEvent: { [weak self] eventName, objectName in
-                var payload: [String: Any] = ["event": eventName]
-                if let name = objectName { payload["objectName"] = name }
+            onEvent: {
+                [weak self] eventName, objectName, objectId in
+                let payload: [String: Any] = [
+                    "event": eventName,
+                    "objectName": objectName,
+                    "objectId": objectId,
+                ]
                 self?.onSplineEvent(payload)
             }
         )
@@ -64,46 +69,30 @@ private struct SplineSceneView: View {
     let url: URL
     let controller: SplineController
     let onSceneLoaded: () -> Void
-    let onEvent: (String, String?) -> Void
+    let onEvent: (String, String, String) -> Void
 
     var body: some View {
         SplineView(sceneFileURL: url, controller: controller) { phase in
-            phase.content?
-                .task {
-                    onSceneLoaded()
-
-                    controller.addEventListener(.mouseUp) { obj in
-                        onEvent("mouseUp", obj.name)
-                    }
-                    controller.addEventListener(.mouseDown) { obj in
-                        onEvent("mouseDown", obj.name)
-                    }
-                    controller.addEventListener(.mousePress) { obj in
-                        onEvent("mousePress", obj.name)
-                    }
-                    controller.addEventListener(.mouseHover) { obj in
-                        onEvent("mouseHover", obj.name)
-                    }
-                    controller.addEventListener(.keyUp) { obj in
-                        onEvent("keyUp", obj.name)
-                    }
-                    controller.addEventListener(.keyDown) { obj in
-                        onEvent("keyDown", obj.name)
-                    }
-                    controller.addEventListener(.keyPress) { obj in
-                        onEvent("keyPress", obj.name)
-                    }
-                    controller.addEventListener(.start) { obj in
-                        onEvent("start", obj.name)
-                    }
-                    controller.addEventListener(.lookAt) { obj in
-                        onEvent("lookAt", obj.name)
-                    }
-                    controller.addEventListener(.follow) { obj in
-                        onEvent("follow", obj.name)
+            phase.content?.task {
+                onSceneLoaded()
+                for (eventName, eventType) in [
+                    ("mouseUp", SplineEventName.mouseUp),
+                    ("mouseDown", SplineEventName.mouseDown),
+                    ("mousePress", SplineEventName.mousePress),
+                    ("mouseHover", SplineEventName.mouseHover),
+                    ("keyUp", SplineEventName.keyUp),
+                    ("keyDown", SplineEventName.keyDown),
+                    ("keyPress", SplineEventName.keyPress),
+                    ("start", SplineEventName.start),
+                    ("lookAt", SplineEventName.lookAt),
+                    ("follow", SplineEventName.follow),
+                ] {
+                    controller.addEventListener(eventType) { obj in
+                        print("[ReactNativeSpline] event '\(eventName)' on object '\(obj.name)'")
+                        onEvent(eventName, obj.name, obj.uuid)
                     }
                 }
-        }
-        .ignoresSafeArea(.all)
+            }
+        }.ignoresSafeArea(.all)
     }
 }

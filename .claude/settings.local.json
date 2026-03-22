@@ -4,7 +4,8 @@
       "Bash(grep -E \"\\\\.tsx?$|\\\\.json$\")",
       "Bash(npx tsc:*)",
       "Bash(npm run:*)",
-      "Bash(npx expo:*)"
+      "Bash(npx expo:*)",
+      "Bash(find ~/Library/Developer/Xcode/DerivedData -name *.swiftmodule -path *SplineRuntime*)"
     ]
   }
 }
