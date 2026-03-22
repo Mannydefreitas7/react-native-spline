@@ -6,32 +6,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build TypeScript to /build
-npm run build
+bun run build
 
 # Run tests
-npm test
+bun test
 
 # Run a single test file
-npx jest src/__tests__/lookAtScene.test.ts
+bunx jest src/__tests__/lookAtScene.test.ts
 
 # Lint
-npm run lint
+bun run lint
 
 # Lint and auto-fix
-npm run lint:fix
+bun run lint:fix
 
 # Format
-npm run format
+bun run format
 
 # Run example on iOS (uses bun)
-npm run start
+bun run start
 
 # Open iOS example in Xcode
-npm run open:ios
+bun run open:ios
 
 # Clean build artifacts
-npm run clean
+bun run clean
 ```
+
+Package manager: **bun**. Use `bun run` for scripts and `bunx` for one-off CLIs.
 
 Tooling: **Biome** for linting/formatting (not ESLint/Prettier). **ts-jest** for TypeScript tests. **expo-module-scripts** wraps Jest and the TypeScript build.
 
@@ -45,7 +47,7 @@ This is an **Expo native module** library that bridges [Spline](https://spline.d
 JavaScript/TypeScript (src/)
   ├── ReactNativeSpline.types.ts   — all shared types (SplineEvent, SplineObject, props)
   ├── ReactNativeSplineModule.ts   — thin wrapper over the native Expo module; adds typed addEventListener()
-  ├── ReactNativeSplineView.tsx    — the <SplineView> React component + gyroscope hook
+  ├── ReactNativeSplineView.tsx    — exports the public `<SplineView>` React component + gyroscope hook
   ├── useSpline.ts                 — React hook exposing full scene API (events, variables, objects, playback)
   └── lookAtScene.ts               — MessagePack decoder for .splineswift binary format (extracts lookAt configs)
 
@@ -76,4 +78,4 @@ Tests live in `src/__tests__/`. They use Jest + ts-jest with a Node environment.
 
 ### Example App
 
-`example/` is a standalone Expo app. `example/App.tsx` demonstrates loading a scene URL, subscribing to events via `useSpline`, and displaying the latest event. Run it with `npm run start` (requires iOS simulator).
+`example/` is a standalone Expo app. `example/App.tsx` demonstrates loading a scene URL, subscribing to events via `useSpline`, and displaying the latest event. Run it with `bun run start` (requires iOS simulator).

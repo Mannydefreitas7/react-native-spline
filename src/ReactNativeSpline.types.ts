@@ -44,7 +44,7 @@ export interface SplineObject {
 
 export type SplineEventSubscription = EventSubscription;
 
-export type ReactNativeSplineViewProps = {
+export type SplineViewProps = {
   url: string;
   onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
   onSplineEvent?: (event: { nativeEvent: SplineEventPayload }) => void;
@@ -52,3 +52,5 @@ export type ReactNativeSplineViewProps = {
   gyroscopeLookAtObjectIds?: string[];
   style?: StyleProp<ViewStyle>;
 };
+
+export type ReactNativeSplineViewProps = SplineViewProps;

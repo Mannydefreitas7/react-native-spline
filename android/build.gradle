@@ -18,7 +18,10 @@ android {
 }
 
 dependencies {
-  // Spline 3D runtime — required to compile ReactNativeSplineView.kt
-  // Hosted on Maven Central: https://central.sonatype.com/artifact/design.spline/spline-runtime/overview
-  implementation("design.spline:spline-runtime:+")
+  // Pin the Spline runtime and add the AndroidX lifecycle pieces it relies on.
+  // spline-runtime 0.2.3 publishes these as runtime-only deps, which breaks
+  // compilation here because SplineView implements DefaultLifecycleObserver.
+  implementation("design.spline:spline-runtime:0.2.3")
+  implementation("androidx.lifecycle:lifecycle-common-java8:2.6.2")
+  implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 }

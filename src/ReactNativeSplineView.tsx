@@ -3,11 +3,11 @@ import { requireNativeView } from 'expo';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
-import type { ReactNativeSplineViewProps, SplineObject } from './ReactNativeSpline.types';
+import type { SplineObject, SplineViewProps } from './ReactNativeSpline.types';
 import ReactNativeSplineModule from './ReactNativeSplineModule';
 import { loadCursorLookAtConfigs } from './lookAtScene';
 
-const NativeView: React.ComponentType<ReactNativeSplineViewProps> =
+const NativeView: React.ComponentType<SplineViewProps> =
   requireNativeView('ReactNativeSpline');
 
 const GYROSCOPE_INTERVAL_MS = 16;
@@ -156,7 +156,7 @@ function useGyroscopeDrivenLookAt(
   }, [enabled, isLoaded]);
 }
 
-export default function ReactNativeSplineView(props: ReactNativeSplineViewProps) {
+export default function SplineView(props: SplineViewProps) {
   const {
     onLoad,
     url,
@@ -188,3 +188,5 @@ export default function ReactNativeSplineView(props: ReactNativeSplineViewProps)
     />
   );
 }
+
+export { SplineView as ReactNativeSplineView };

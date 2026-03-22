@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ReactNativeSplineView, useSpline, type SplineEventPayload } from 'react-native-spline';
+import { SplineView, useSpline, type SplineEventPayload } from 'react-native-spline';
 import { SafeAreaView, Text, View } from 'react-native';
 
 export default function App() {
@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ReactNativeSplineView
+      <SplineView
         url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
         onSplineEvent={({ nativeEvent }) => {
           console.log('[view event]', nativeEvent.event, nativeEvent.objectName);

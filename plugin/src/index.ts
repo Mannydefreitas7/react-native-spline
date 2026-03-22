@@ -3,8 +3,8 @@
 // Responsibilities:
 //  iOS  → injects the SplineRuntime Swift Package into the Xcode project
 //         (equivalent to File > Add Package Dependencies in Xcode)
-//  Android → adds `design.spline:spline-runtime` to app/build.gradle
-//            and ensures INTERNET permission is declared
+//  Android → adds the Spline runtime and required AndroidX lifecycle deps
+//            to app/build.gradle and ensures network permissions are declared
 
 import { ConfigPlugin, withXcodeProject, withPodfileProperties, withPodfile, withAppBuildGradle, withAndroidManifest } from '@expo/config-plugins';
 
@@ -14,7 +14,9 @@ const SPLINE_IOS_REPO = 'https://github.com/splinetool/spline-ios';
 const SPLINE_IOS_PRODUCT = 'SplineRuntime';
 const SPLINE_IOS_MIN_VERSION = '0.2.0';
 
-const SPLINE_ANDROID_DEP = 'design.spline:spline-runtime:+';
+const SPLINE_ANDROID_DEP = 'design.spline:spline-runtime:0.2.3';
+const SPLINE_ANDROID_LIFECYCLE_COMMON_DEP = 'androidx.lifecycle:lifecycle-common-java8:2.6.2';
+const SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP = 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2';
 
 // ─── iOS: set minimum deployment target ──────────────────────────────────────
 
@@ -172,17 +174,31 @@ const withSplineIOS: ConfigPlugin = (config) => {
 // ─── Android: add Gradle dependency ──────────────────────────────────────────
 
 /**
- * Appends `design.spline:spline-runtime:+` to the app's `dependencies {}` block
- * in `android/app/build.gradle`.
+ * Appends the Spline runtime and required AndroidX lifecycle dependencies to
+ * the app's `dependencies {}` block in `android/app/build.gradle`.
  */
 const withSplineAndroid: ConfigPlugin = (config) => {
   return withAppBuildGradle(config, (config) => {
-    if (config.modResults.contents.includes(SPLINE_ANDROID_DEP)) {
-      return config; // already present
+    const dependenciesToAdd = [
+      ['Spline 3D runtime', SPLINE_ANDROID_DEP],
+      ['Required by SplineView(DefaultLifecycleObserver)', SPLINE_ANDROID_LIFECYCLE_COMMON_DEP],
+      ['Required by SplineView(DefaultLifecycleObserver)', SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP],
+    ].filter(([, dependency]) => !config.modResults.contents.includes(dependency));
+
+    if (dependenciesToAdd.length === 0) {
+      return config;
     }
+
+    const injectedLines = dependenciesToAdd
+      .map(
+        ([comment, dependency]) =>
+          `    // ${comment} — added by expo-spline config plugin\n    implementation("${dependency}")`
+      )
+      .join('\n');
+
     config.modResults.contents = config.modResults.contents.replace(
       /dependencies\s*\{/,
-      `dependencies {\n    // Spline 3D runtime — added by expo-spline config plugin\n    implementation("${SPLINE_ANDROID_DEP}")\n`
+      `dependencies {\n${injectedLines}\n`
     );
     return config;
   });
