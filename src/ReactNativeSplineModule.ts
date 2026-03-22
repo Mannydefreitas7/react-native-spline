@@ -3,20 +3,22 @@ import { NativeModule, requireNativeModule } from 'expo';
 import {
   ReactNativeSplineModuleEvents,
   SplineEvent,
+  SplineEventPayload,
+  SplineEventSubscription,
   SplineObject,
 } from './ReactNativeSpline.types';
 
-declare class ReactNativeSplineModule extends NativeModule<ReactNativeSplineModuleEvents> {
+declare class NativeReactNativeSplineModule extends NativeModule<ReactNativeSplineModuleEvents> {
   PI: number;
   hello(): string;
   setValueAsync(value: string): Promise<void>;
 
   // Spline code API methods
-  addEventListener(event: SplineEvent, callback: (payload: SplineEvent) => void): void;
   emitEvent(event: SplineEvent, nameOrUUID: string): void;
   emitEventReverse(event: SplineEvent, nameOrUUID: string): void;
   findObjectById(id: string): Promise<SplineObject | null>;
   findObjectByName(name: string): Promise<SplineObject | null>;
+  setObjectRotation(nameOrUUID: string, x: number, y: number, z: number): void;
   setZoom(value: number): void;
   setNumberVariable(name: string, value: number): void;
   setBoolVariable(name: string, value: boolean): void;
@@ -29,5 +31,21 @@ declare class ReactNativeSplineModule extends NativeModule<ReactNativeSplineModu
   setBackgroundColor(color: { r: number; g: number; b: number; a: number }): void;
 }
 
-// This call loads the native module object from the JSI.
-export default requireNativeModule<ReactNativeSplineModule>('ReactNativeSpline');
+type ReactNativeSplineModuleType = NativeReactNativeSplineModule & {
+  addEventListener(
+    event: SplineEvent,
+    callback: (payload: SplineEventPayload) => void
+  ): SplineEventSubscription;
+};
+
+const ReactNativeSplineModule =
+  requireNativeModule<ReactNativeSplineModuleType>('ReactNativeSpline');
+
+ReactNativeSplineModule.addEventListener = (event, callback) =>
+  ReactNativeSplineModule.addListener('onSplineEvent', (payload) => {
+    if (payload.event === event) {
+      callback(payload);
+    }
+  });
+
+export default ReactNativeSplineModule;

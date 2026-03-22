@@ -1,4 +1,5 @@
 import type { StyleProp, ViewStyle } from 'react-native';
+import type { EventSubscription } from 'expo-modules-core';
 
 export type OnLoadEventPayload = {
   url: string;
@@ -38,14 +39,16 @@ export interface SplineObject {
   rotation: { x: number; y: number; z: number };
   scale: { x: number; y: number; z: number };
   visible: boolean;
-  intensity?: number; // For light objects
-  emitEvent(event: SplineEvent): void;
-  emitEventReverse(event: SplineEvent): void;
+  intensity?: number;
 }
+
+export type SplineEventSubscription = EventSubscription;
 
 export type ReactNativeSplineViewProps = {
   url: string;
   onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
   onSplineEvent?: (event: { nativeEvent: SplineEventPayload }) => void;
+  useDeviceGyroscopeForLookAt?: boolean;
+  gyroscopeLookAtObjectIds?: string[];
   style?: StyleProp<ViewStyle>;
 };

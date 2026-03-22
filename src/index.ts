@@ -4,3 +4,4 @@ export { default as ReactNativeSplineView } from './ReactNativeSplineView';
 export * from './ReactNativeSpline.types';
 export { useSpline } from './useSpline';
 export type { UseSplineResult } from './useSpline';
+export { useVariable } from './useVariable';

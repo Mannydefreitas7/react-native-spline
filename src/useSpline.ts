@@ -1,7 +1,12 @@
 import { useCallback } from 'react'
 
 import ReactNativeSpline from './ReactNativeSplineModule'
-import type { SplineEvent, SplineObject } from './ReactNativeSpline.types'
+import type {
+  SplineEvent,
+  SplineEventPayload,
+  SplineEventSubscription,
+  SplineObject,
+} from './ReactNativeSpline.types'
 
 export interface UseSplineResult {
   /** Emit an event on the object with the given name or UUID. */
@@ -14,30 +19,22 @@ export interface UseSplineResult {
   findObjectByName: (name: string) => Promise<SplineObject | null>
   /** Set the scene zoom level. */
   setZoom: (value: number) => void
+  /** Set an object's rotation in radians. */
+  setObjectRotation: (nameOrUUID: string, rotation: { x: number; y: number; z: number }) => void
   /** Set the scene background color using RGBA components (0–255). */
   setBackgroundColor: (color: { r: number; g: number; b: number; a: number }) => void
   /** Start / resume scene playback. */
   play: () => void
   /** Stop / pause scene playback. */
   stop: () => void
-  /** Set a numeric variable by name. */
-  setNumberVariable: (name: string, value: number) => void
-  /** Set a boolean variable by name. */
-  setBoolVariable: (name: string, value: boolean) => void
-  /** Set a string variable by name. */
-  setStringVariable: (name: string, value: string) => void
-  /** Get a numeric variable by name. */
-  getNumberVariable: (name: string) => Promise<number | null>
-  /** Get a boolean variable by name. */
-  getBoolVariable: (name: string) => Promise<boolean | null>
-  /** Get a string variable by name. */
-  getStringVariable: (name: string) => Promise<string | null>
   /**
    * Add a listener for a Spline scene event.
-   * Call this inside a `useEffect` and ensure you remove the listener on cleanup
-   * by calling `ReactNativeSpline.removeAllListeners(event)` (or unmounting the view).
+   * Call this inside a `useEffect` and remove the returned subscription on cleanup.
    */
-  addEventListener: (event: SplineEvent, callback: (payload: SplineEvent) => void) => void
+  addEventListener: (
+    event: SplineEvent,
+    callback: (payload: SplineEventPayload) => void
+  ) => SplineEventSubscription
 }
 
 /**
@@ -69,6 +66,12 @@ export function useSpline(): UseSplineResult {
 
   const setZoom = useCallback((value: number) => ReactNativeSpline.setZoom(value), [])
 
+  const setObjectRotation = useCallback(
+    (nameOrUUID: string, rotation: { x: number; y: number; z: number }) =>
+      ReactNativeSpline.setObjectRotation(nameOrUUID, rotation.x, rotation.y, rotation.z),
+    []
+  )
+
   const setBackgroundColor = useCallback(
     (color: { r: number; g: number; b: number; a: number }) =>
       ReactNativeSpline.setBackgroundColor(color),
@@ -79,38 +82,8 @@ export function useSpline(): UseSplineResult {
 
   const stop = useCallback(() => ReactNativeSpline.stop(), [])
 
-  const setNumberVariable = useCallback(
-    (name: string, value: number) => ReactNativeSpline.setNumberVariable(name, value),
-    []
-  )
-
-  const setBoolVariable = useCallback(
-    (name: string, value: boolean) => ReactNativeSpline.setBoolVariable(name, value),
-    []
-  )
-
-  const setStringVariable = useCallback(
-    (name: string, value: string) => ReactNativeSpline.setStringVariable(name, value),
-    []
-  )
-
-  const getNumberVariable = useCallback(
-    (name: string) => ReactNativeSpline.getNumberVariable(name),
-    []
-  )
-
-  const getBoolVariable = useCallback(
-    (name: string) => ReactNativeSpline.getBoolVariable(name),
-    []
-  )
-
-  const getStringVariable = useCallback(
-    (name: string) => ReactNativeSpline.getStringVariable(name),
-    []
-  )
-
   const addEventListener = useCallback(
-    (event: SplineEvent, callback: (payload: SplineEvent) => void) =>
+    (event: SplineEvent, callback: (payload: SplineEventPayload) => void) =>
       ReactNativeSpline.addEventListener(event, callback),
     []
   )
@@ -121,15 +94,10 @@ export function useSpline(): UseSplineResult {
     findObjectById,
     findObjectByName,
     setZoom,
+    setObjectRotation,
     setBackgroundColor,
     play,
     stop,
-    setNumberVariable,
-    setBoolVariable,
-    setStringVariable,
-    getNumberVariable,
-    getBoolVariable,
-    getStringVariable,
     addEventListener,
   }
 }

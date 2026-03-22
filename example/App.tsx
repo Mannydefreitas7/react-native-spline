@@ -1,18 +1,46 @@
-import { useEvent } from 'expo';
-import { ReactNativeSplineView, ReactNativeSpline } from 'react-native-spline';
-import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ReactNativeSplineView, useSpline, type SplineEventPayload } from 'react-native-spline';
+import { SafeAreaView, Text, View } from 'react-native';
 
 export default function App() {
+  const { addEventListener } = useSpline();
+  const [latestEvent, setLatestEvent] = useState<SplineEventPayload | null>(null);
 
+  useEffect(() => {
+    const subscriptions = [
+      addEventListener('mouseDown', setLatestEvent),
+      addEventListener('mouseUp', setLatestEvent),
+      addEventListener('mouseHover', setLatestEvent),
+      addEventListener('start', setLatestEvent),
+      addEventListener('follow', setLatestEvent),
+      addEventListener('lookAt', setLatestEvent),
+    ];
+
+    return () => {
+      for (const subscription of subscriptions) {
+        subscription.remove();
+      }
+    };
+  }, [addEventListener]);
 
   return (
-    <ReactNativeSplineView
-      url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
-      onSplineEvent={(event) => console.log(event.nativeEvent.event)}
-
-      onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
-      style={styles.view}
-    />
+    <SafeAreaView style={styles.container}>
+      <ReactNativeSplineView
+        url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
+        onSplineEvent={({ nativeEvent }) => {
+          console.log('[view event]', nativeEvent.event, nativeEvent.objectName);
+        }}
+        onLoad={({ nativeEvent: { url } }) => console.log(`Loaded: ${url}`)}
+        style={styles.view}
+      />
+      <Group name="Latest module listener event">
+        <Text>
+          {latestEvent
+            ? `${latestEvent.event} on ${latestEvent.objectName ?? latestEvent.objectId ?? 'unknown'}`
+            : 'Interact with the scene to trigger an event.'}
+        </Text>
+      </Group>
+    </SafeAreaView>
   );
 }
 

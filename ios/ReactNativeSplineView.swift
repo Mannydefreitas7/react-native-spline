@@ -8,6 +8,7 @@ import SwiftUI
 class ReactNativeSplineView: ExpoView {
     let onLoad = EventDispatcher()
     let onSplineEvent = EventDispatcher()
+    var onModuleSplineEvent: (([String: Any]) -> Void)?
 
     /// Exposed so the module can call SplineController API methods imperatively.
     private(set) var controller = SplineController()
@@ -43,6 +44,7 @@ class ReactNativeSplineView: ExpoView {
                     "objectId": objectId,
                 ]
                 self?.onSplineEvent(payload)
+                self?.onModuleSplineEvent?(payload)
             }
         )
 
