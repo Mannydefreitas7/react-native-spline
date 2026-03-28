@@ -1,12 +1,77 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "organizeImports": {
     "enabled": true
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn",
+        "noVoid": "error",
+        "useSimplifiedLogicExpression": "warn"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "warn",
+        "useHookAtTopLevel": "error"
+      },
+      "performance": {
+        "noAccumulatingSpread": "warn",
+        "noBarrelFile": "warn",
+        "noReExportAll": "warn"
+      },
+      "style": {
+        "noNegationElse": "warn",
+        "useBlockStatements": "off",
+        "useCollapsedElseIf": "warn",
+        "useConsistentArrayType": {
+          "level": "warn",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useFilenamingConvention": {
+          "level": "warn",
+          "options": {
+            "requireAscii": true,
+            "filenameCases": [
+              "camelCase",
+              "PascalCase",
+              "kebab-case"
+            ]
+          }
+        },
+        "useForOf": "warn",
+        "useFragmentSyntax": "warn",
+        "useShorthandArrayType": "warn",
+        "useShorthandAssign": "warn",
+        "useSingleCaseStatement": "off"
+      },
+      "suspicious": {
+        "noConsole": "warn",
+        "noEmptyBlockStatements": "warn"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": [
+              "className",
+              "class",
+              "style"
+            ],
+            "functions": [
+              "clsx",
+              "cn",
+              "cva",
+              "twMerge"
+            ]
+          }
+        }
+      }
     }
   },
   "formatter": {
@@ -29,19 +94,54 @@
       "bracketSpacing": true,
       "bracketSameLine": false,
       "attributePosition": "auto"
+    },
+    "globals": [
+      "JSX"
+    ]
+  },
+  "json": {
+    "formatter": {
+      "trailingCommas": "none"
     }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "quoteStyle": "double"
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "master"
   },
   "files": {
     "include": [
       "src/**/*",
+      "plugin/**/*",
       "**/*.ts",
       "**/*.tsx",
       "**/*.js",
-      "**/*.jsx"
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.jsonc"
     ],
     "ignore": [
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "example/**/*",
+      "ios/**/*",
+      "android/**/*",
+      "*.lock",
+      "bun.lock"
     ]
   }
 }

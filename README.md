@@ -279,6 +279,10 @@ Additional notes:
 - if you change the plugin source, rebuild the plugin output so `plugin/build` stays in sync
 - Android native integration depends on the pinned Spline runtime and AndroidX lifecycle dependencies documented above
 
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a list of changes and release notes. This project follows [Semantic Versioning](https://semver.org/) and uses [Conventional Commits](https://www.conventionalcommits.org/) to automatically generate the changelog.
+
 ## License
 
 MIT
