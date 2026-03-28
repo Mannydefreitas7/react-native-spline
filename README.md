@@ -1,6 +1,6 @@
 # react-native-spline
 
-<img src="./docs/hero.jpg" alt="react native spline" />
+<img src="hero.png" alt="react native spline" />
 
 React Native bindings for [Spline](https://spline.design) scenes, built as an Expo native module.
 
