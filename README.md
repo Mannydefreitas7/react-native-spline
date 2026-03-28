@@ -1,6 +1,6 @@
 # react-native-spline
 
-![react-native-spline banner](https://raw.githubusercontent.com/mannydefreitas7/react-native-spline/docs/hero.png)
+![react-native-spline banner](./docs/hero.png)
 
 React Native bindings for [Spline](https://spline.design) scenes, built as an Expo native module.
 
