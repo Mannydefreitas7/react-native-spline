@@ -35,6 +35,7 @@ export function useVariable<T extends SplineVariableType>(
 ): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(initialValue)
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: initialValue is only used to infer the variable type; the native read should run once per variable name.
   useEffect(() => {
     getVariableAsync(name, initialValue).then((v) => {
       if (v !== null) setValue(v as T)

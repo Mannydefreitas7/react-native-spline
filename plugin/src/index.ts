@@ -6,17 +6,24 @@
 //  Android → adds the Spline runtime and required AndroidX lifecycle deps
 //            to app/build.gradle and ensures network permissions are declared
 
-import { ConfigPlugin, withXcodeProject, withPodfileProperties, withPodfile, withAppBuildGradle, withAndroidManifest } from '@expo/config-plugins';
+import {
+  type ConfigPlugin,
+  withAndroidManifest,
+  withAppBuildGradle,
+  withPodfile,
+  withPodfileProperties,
+  withXcodeProject,
+} from '@expo/config-plugins'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const SPLINE_IOS_REPO = 'https://github.com/splinetool/spline-ios';
-const SPLINE_IOS_PRODUCT = 'SplineRuntime';
-const SPLINE_IOS_MIN_VERSION = '0.2.0';
+const SPLINE_IOS_REPO = 'https://github.com/splinetool/spline-ios'
+const SPLINE_IOS_PRODUCT = 'SplineRuntime'
+const SPLINE_IOS_MIN_VERSION = '0.2.0'
 
-const SPLINE_ANDROID_DEP = 'design.spline:spline-runtime:0.2.3';
-const SPLINE_ANDROID_LIFECYCLE_COMMON_DEP = 'androidx.lifecycle:lifecycle-common-java8:2.6.2';
-const SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP = 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2';
+const SPLINE_ANDROID_DEP = 'design.spline:spline-runtime:0.2.3'
+const SPLINE_ANDROID_LIFECYCLE_COMMON_DEP = 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
+const SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP = 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
 
 // ─── iOS: set minimum deployment target ──────────────────────────────────────
 
@@ -29,30 +36,30 @@ const SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP = 'androidx.lifecycle:lifecycle-runti
  */
 const withSplineIOSDeploymentTarget: ConfigPlugin = (config) => {
   config = withPodfileProperties(config, (config) => {
-    config.modResults['ios.deploymentTarget'] = '16.0';
-    return config;
-  });
+    config.modResults['ios.deploymentTarget'] = '16.0'
+    return config
+  })
 
   config = withXcodeProject(config, (config) => {
-    const project = config.modResults;
-    const objects = project.hash.project.objects;
+    const project = config.modResults
+    const objects = project.hash.project.objects
 
     // Update IPHONEOS_DEPLOYMENT_TARGET in all XCBuildConfiguration entries
-    const buildConfigs: Record<string, Record<string, any>> = objects['XCBuildConfiguration'] ?? {};
+    const buildConfigs: Record<string, Record<string, any>> = objects['XCBuildConfiguration'] ?? {}
     for (const [key, cfg] of Object.entries(buildConfigs)) {
-      if (key.endsWith('_comment')) continue;
-      if (typeof cfg !== 'object') continue;
-      const buildSettings = (cfg as Record<string, any>).buildSettings ?? {};
+      if (key.endsWith('_comment')) continue
+      if (typeof cfg !== 'object') continue
+      const buildSettings = (cfg as Record<string, any>).buildSettings ?? {}
       if ('IPHONEOS_DEPLOYMENT_TARGET' in buildSettings) {
-        buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0';
+        buildSettings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       }
     }
 
-    return config;
-  });
+    return config
+  })
 
-  return config;
-};
+  return config
+}
 
 // ─── iOS: expose SPM framework to pod target ─────────────────────────────────
 
@@ -64,8 +71,8 @@ const withSplineIOSDeploymentTarget: ConfigPlugin = (config) => {
  */
 const withSplineIOSPodfileFrameworkPath: ConfigPlugin = (config) => {
   return withPodfile(config, (config) => {
-    const MARKER = '# expo-spline: SplineRuntime framework search path';
-    if (config.modResults.contents.includes(MARKER)) return config; // idempotent
+    const MARKER = '# expo-spline: SplineRuntime framework search path'
+    if (config.modResults.contents.includes(MARKER)) return config // idempotent
 
     const snippet = `
   ${MARKER}
@@ -77,16 +84,16 @@ const withSplineIOSPodfileFrameworkPath: ConfigPlugin = (config) => {
         build_config.build_settings['FRAMEWORK_SEARCH_PATHS'] << '"$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/PackageFrameworks"'
       end
     end
-  end`;
+  end`
 
     // Insert into the existing post_install block (guaranteed to exist from the RN Podfile template)
     config.modResults.contents = config.modResults.contents.replace(
       /post_install do \|installer\|/,
       `post_install do |installer|${snippet}`
-    );
-    return config;
-  });
-};
+    )
+    return config
+  })
+}
 
 // ─── iOS: inject Swift Package ────────────────────────────────────────────────
 
@@ -101,23 +108,24 @@ const withSplineIOSPodfileFrameworkPath: ConfigPlugin = (config) => {
  */
 const withSplineIOS: ConfigPlugin = (config) => {
   return withXcodeProject(config, (xcodeProject) => {
-    const objects = xcodeProject.modResults.hash.project.objects;
+    const objects = xcodeProject.modResults.hash.project.objects
 
     // ── Guard: already added? ────────────────────────────────────────────────
-    const existingRefs: Record<string, Record<string, any>> = objects['XCRemoteSwiftPackageReference'] ?? {};
+    const existingRefs: Record<string, Record<string, any>> = objects[
+      'XCRemoteSwiftPackageReference'
+    ] ?? {}
     const alreadyAdded = Object.values(existingRefs).some(
       (ref: Record<string, any>) =>
-        typeof ref === 'object' &&
-        ref.repositoryURL === `"${SPLINE_IOS_REPO}"`
-    );
-    if (alreadyAdded) return xcodeProject;
+        typeof ref === 'object' && ref.repositoryURL === `"${SPLINE_IOS_REPO}"`
+    )
+    if (alreadyAdded) return xcodeProject
 
     // ── Generate stable-ish UUIDs ────────────────────────────────────────────
-    const packageUUID = xcodeProject.modResults.generateUuid();
-    const productUUID = xcodeProject.modResults.generateUuid();
+    const packageUUID = xcodeProject.modResults.generateUuid()
+    const productUUID = xcodeProject.modResults.generateUuid()
 
     // ── 1. XCRemoteSwiftPackageReference ────────────────────────────────────
-    objects['XCRemoteSwiftPackageReference'] = objects['XCRemoteSwiftPackageReference'] ?? {};
+    objects['XCRemoteSwiftPackageReference'] = objects['XCRemoteSwiftPackageReference'] ?? {}
     objects['XCRemoteSwiftPackageReference'][packageUUID] = {
       isa: 'XCRemoteSwiftPackageReference',
       repositoryURL: `"${SPLINE_IOS_REPO}"`,
@@ -125,51 +133,51 @@ const withSplineIOS: ConfigPlugin = (config) => {
         kind: 'upToNextMajorVersion',
         minimumVersion: SPLINE_IOS_MIN_VERSION,
       },
-    };
-    objects['XCRemoteSwiftPackageReference'][`${packageUUID}_comment`] = SPLINE_IOS_PRODUCT;
+    }
+    objects['XCRemoteSwiftPackageReference'][`${packageUUID}_comment`] = SPLINE_IOS_PRODUCT
 
     // ── 2. XCSwiftPackageProductDependency ───────────────────────────────────
-    objects['XCSwiftPackageProductDependency'] = objects['XCSwiftPackageProductDependency'] ?? {};
+    objects['XCSwiftPackageProductDependency'] = objects['XCSwiftPackageProductDependency'] ?? {}
     objects['XCSwiftPackageProductDependency'][productUUID] = {
       isa: 'XCSwiftPackageProductDependency',
       package: packageUUID,
       productName: SPLINE_IOS_PRODUCT,
-    };
-    objects['XCSwiftPackageProductDependency'][`${productUUID}_comment`] = SPLINE_IOS_PRODUCT;
+    }
+    objects['XCSwiftPackageProductDependency'][`${productUUID}_comment`] = SPLINE_IOS_PRODUCT
 
     // ── 3. Add packageReference to PBXProject ────────────────────────────────
-    const projectSection: Record<string, Record<string, any>> = objects['PBXProject'] ?? {};
+    const projectSection: Record<string, Record<string, any>> = objects['PBXProject'] ?? {}
     const projectObj = Object.values(projectSection).find(
       (p: Record<string, any>) => typeof p === 'object' && p.isa === 'PBXProject'
-    );
+    )
     if (projectObj) {
-      projectObj.packageReferences = projectObj.packageReferences ?? [];
+      projectObj.packageReferences = projectObj.packageReferences ?? []
       projectObj.packageReferences.push({
         value: packageUUID,
         comment: `XCRemoteSwiftPackageReference "${SPLINE_IOS_PRODUCT}"`,
-      });
+      })
     }
 
     // ── 4. Add product dependency to the main app target ─────────────────────
-    const nativeTargets: Record<string, Record<string, any>> = objects['PBXNativeTarget'] ?? {};
+    const nativeTargets: Record<string, Record<string, any>> = objects['PBXNativeTarget'] ?? {}
     for (const [key, target] of Object.entries(nativeTargets)) {
-      if (key.endsWith('_comment')) continue;
-      if (typeof target !== 'object') continue;
+      if (key.endsWith('_comment')) continue
+      if (typeof target !== 'object') continue
       // Target the application target (not test targets, extensions, etc.)
-      const typedTarget = target as Record<string, any>;
+      const typedTarget = target as Record<string, any>
       if (typedTarget.productType === '"com.apple.product-type.application"') {
-        typedTarget.packageProductDependencies = typedTarget.packageProductDependencies ?? [];
+        typedTarget.packageProductDependencies = typedTarget.packageProductDependencies ?? []
         typedTarget.packageProductDependencies.push({
           value: productUUID,
           comment: SPLINE_IOS_PRODUCT,
-        });
-        break;
+        })
+        break
       }
     }
 
-    return xcodeProject;
-  });
-};
+    return xcodeProject
+  })
+}
 
 // ─── Android: add Gradle dependency ──────────────────────────────────────────
 
@@ -183,10 +191,10 @@ const withSplineAndroid: ConfigPlugin = (config) => {
       ['Spline 3D runtime', SPLINE_ANDROID_DEP],
       ['Required by SplineView(DefaultLifecycleObserver)', SPLINE_ANDROID_LIFECYCLE_COMMON_DEP],
       ['Required by SplineView(DefaultLifecycleObserver)', SPLINE_ANDROID_LIFECYCLE_RUNTIME_DEP],
-    ].filter(([, dependency]) => !config.modResults.contents.includes(dependency));
+    ].filter(([, dependency]) => !config.modResults.contents.includes(dependency))
 
     if (dependenciesToAdd.length === 0) {
-      return config;
+      return config
     }
 
     const injectedLines = dependenciesToAdd
@@ -194,47 +202,47 @@ const withSplineAndroid: ConfigPlugin = (config) => {
         ([comment, dependency]) =>
           `    // ${comment} — added by expo-spline config plugin\n    implementation("${dependency}")`
       )
-      .join('\n');
+      .join('\n')
 
     config.modResults.contents = config.modResults.contents.replace(
       /dependencies\s*\{/,
       `dependencies {\n${injectedLines}\n`
-    );
-    return config;
-  });
-};
+    )
+    return config
+  })
+}
 
 // ─── Android: ensure INTERNET permission ─────────────────────────────────────
 
 const withSplineAndroidManifest: ConfigPlugin = (config) => {
   return withAndroidManifest(config, (config) => {
-    const manifest = config.modResults.manifest;
-    const permissions = manifest['uses-permission'] ?? [];
+    const manifest = config.modResults.manifest
+    const permissions = manifest['uses-permission'] ?? []
 
     const hasInternet = permissions.some(
       (p: any) => p.$?.['android:name'] === 'android.permission.INTERNET'
-    );
+    )
     if (!hasInternet) {
       manifest['uses-permission'] = [
         ...permissions,
         { $: { 'android:name': 'android.permission.INTERNET' } },
-      ];
+      ]
     }
 
     const hasNetwork = permissions.some(
       (p: any) => p.$?.['android:name'] === 'android.permission.ACCESS_NETWORK_STATE'
-    );
+    )
     if (!hasNetwork) {
       manifest['uses-permission'] = [
         ...(manifest['uses-permission'] ?? []),
         { $: { 'android:name': 'android.permission.ACCESS_NETWORK_STATE' } },
-      ];
+      ]
     }
 
-    config.modResults.manifest = manifest;
-    return config;
-  });
-};
+    config.modResults.manifest = manifest
+    return config
+  })
+}
 
 // ─── Compose them together ────────────────────────────────────────────────────
 
@@ -249,12 +257,12 @@ const withSplineAndroidManifest: ConfigPlugin = (config) => {
  * ```
  */
 const withSpline: ConfigPlugin = (config) => {
-  config = withSplineIOSDeploymentTarget(config);
-  config = withSplineIOS(config);
-  config = withSplineIOSPodfileFrameworkPath(config);
-  config = withSplineAndroid(config);
-  config = withSplineAndroidManifest(config);
-  return config;
-};
+  config = withSplineIOSDeploymentTarget(config)
+  config = withSplineIOS(config)
+  config = withSplineIOSPodfileFrameworkPath(config)
+  config = withSplineAndroid(config)
+  config = withSplineAndroidManifest(config)
+  return config
+}
 
-export default withSpline;
+export default withSpline

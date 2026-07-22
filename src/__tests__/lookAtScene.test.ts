@@ -1,4 +1,4 @@
-import { extractCursorLookAtConfigs } from '../lookAtScene';
+import { extractCursorLookAtConfigs } from '../lookAtScene'
 
 describe('extractCursorLookAtConfigs', () => {
   it('returns only cursor-driven lookAt objects', () => {
@@ -62,7 +62,7 @@ describe('extractCursorLookAtConfigs', () => {
           },
         },
       ],
-    };
+    }
 
     expect(extractCursorLookAtConfigs(sceneData)).toEqual([
       {
@@ -75,6 +75,6 @@ describe('extractCursorLookAtConfigs', () => {
         target: undefined,
         tilt: 'target',
       },
-    ]);
-  });
-});
+    ])
+  })
+})

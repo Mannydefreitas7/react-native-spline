@@ -2,12 +2,7 @@
   "formatter": {
     "external": {
       "command": "bunx",
-      "arguments": [
-        "biome",
-        "format",
-        "--stdin-file-path",
-        "{buffer_path}"
-      ]
+      "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
     }
   },
   "format_on_save": "on",
@@ -20,125 +15,65 @@
   },
   "languages": {
     "TypeScript": {
-      "language_servers": [
-        "biome",
-        "typescript-language-server",
-        "..."
-      ],
+      "language_servers": ["biome", "typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "TSX": {
-      "language_servers": [
-        "biome",
-        "typescript-language-server",
-        "..."
-      ],
+      "language_servers": ["biome", "typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "JavaScript": {
-      "language_servers": [
-        "biome",
-        "typescript-language-server",
-        "..."
-      ],
+      "language_servers": ["biome", "typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "JSX": {
-      "language_servers": [
-        "biome",
-        "typescript-language-server",
-        "..."
-      ],
+      "language_servers": ["biome", "typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "JSON": {
-      "language_servers": [
-        "biome",
-        "..."
-      ],
+      "language_servers": ["biome", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "JSONC": {
-      "language_servers": [
-        "biome",
-        "..."
-      ],
+      "language_servers": ["biome", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     },
     "CSS": {
-      "language_servers": [
-        "biome",
-        "..."
-      ],
+      "language_servers": ["biome", "..."],
       "formatter": {
         "external": {
           "command": "bunx",
-          "arguments": [
-            "biome",
-            "format",
-            "--stdin-file-path",
-            "{buffer_path}"
-          ]
+          "arguments": ["biome", "format", "--stdin-file-path", "{buffer_path}"]
         }
       }
     }
