@@ -1,12 +1,11 @@
 import { useCallback } from 'react'
-
-import ReactNativeSpline from './ReactNativeSplineModule'
 import type {
   SplineEvent,
   SplineEventPayload,
   SplineEventSubscription,
   SplineObject,
 } from './ReactNativeSpline.types'
+import ReactNativeSpline from './ReactNativeSplineModule'
 
 export interface UseSplineResult {
   /** Emit an event on the object with the given name or UUID. */
@@ -54,10 +53,7 @@ export function useSpline(): UseSplineResult {
     []
   )
 
-  const findObjectById = useCallback(
-    (id: string) => ReactNativeSpline.findObjectById(id),
-    []
-  )
+  const findObjectById = useCallback((id: string) => ReactNativeSpline.findObjectById(id), [])
 
   const findObjectByName = useCallback(
     (name: string) => ReactNativeSpline.findObjectByName(name),

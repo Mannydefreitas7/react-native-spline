@@ -1,41 +1,59 @@
+<div align="center">
+
+<img src="hero.png" alt="react-native-spline — Spline 3D scenes in React Native" width="720" />
+
 # react-native-spline
 
-<img src="hero.png" alt="react native spline" />
+**Interactive [Spline](https://spline.design) 3D scenes in React Native — fully native, no WebView.**
 
-React Native bindings for [Spline](https://spline.design) scenes, built as an Expo native module.
+Powered by the official Spline runtimes for iOS and Android, wrapped as an Expo native module with a zero-config plugin.
 
-This package lets you:
+[![npm version](https://img.shields.io/npm/v/react-native-spline.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/react-native-spline)
+[![CI](https://github.com/emmanuel-defreitas/react-native-spline/actions/workflows/ci.yml/badge.svg)](https://github.com/emmanuel-defreitas/react-native-spline/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![platforms](https://img.shields.io/badge/platforms-iOS%2016%2B%20%7C%20Android-8A2BE2)](#requirements)
+[![made with Expo](https://img.shields.io/badge/made%20with-Expo%20Modules-000020?logo=expo)](https://docs.expo.dev/modules/overview/)
 
-- render hosted `.splineswift` scenes inside React Native
-- listen to Spline interaction events from JavaScript
-- control the active scene imperatively with `useSpline()`
-- read and update Spline scene variables
-- drive iOS `lookAt` interactions from the device gyroscope
+<br />
 
-## Status
+```tsx
+<SplineView url="https://build.spline.design/.../scene.splineswift" style={{ flex: 1 }} />
+```
 
-This repository is under active development. The iOS and Android example apps are intended to be the source of truth for current integration behavior.
+*That's it. A real, GPU-rendered, interactive 3D scene in your app.*
 
-## Features
+</div>
 
-- Expo native module with an Expo config plugin
-- `SplineView` component for rendering scenes
-- `useSpline()` hook for runtime scene control
-- `useVariable()` hook for typed Spline variables
-- iOS Swift Package Manager integration for `SplineRuntime`
-- Android Gradle dependency and permission setup via config plugin
+---
+
+## Why react-native-spline?
+
+|  | |
+| --- | --- |
+| 🚀 **Truly native** | Renders through Spline's official Swift and Android runtimes — not a WebView. Full 60fps, native gestures, native memory. |
+| 🔌 **Zero-config setup** | One config plugin wires up the SplineRuntime Swift Package, Gradle dependencies, permissions, and deployment targets. `expo prebuild` and go. |
+| 🎮 **Full scene control** | Emit events, play/pause, zoom, rotate objects, recolor the background — all from JavaScript via `useSpline()`. |
+| 🔄 **Reactive variables** | `useVariable()` is `useState` for your Spline scene — read and write scene variables with React ergonomics. |
+| 📱 **Gyroscope look-at** | On iOS, objects with a cursor "Look At" interaction automatically follow device motion. Your scene literally looks back at the user. |
+| 🧩 **TypeScript first** | Every event, object, and prop is fully typed. |
+
+## Requirements
+
+- A recent Expo SDK — developed against SDK 55 (or bare React Native with [Expo Modules](https://docs.expo.dev/bare/installing-expo-modules/) installed)
+- iOS 16.0+ (required by Spline's iOS runtime)
+- A hosted **`.splineswift`** scene URL — export via **Spline → Export → Code → Swift** ([docs](https://docs.spline.design/exporting-your-scene/apple-platform/code-api-for-swift-ui))
 
 ## Installation
 
-### Expo projects
-
-Install the package:
+**1. Install the package**
 
 ```bash
+npx expo install react-native-spline
+# or
 bun add react-native-spline
 ```
 
-Add the config plugin to your Expo config:
+**2. Add the config plugin** to `app.json` / `app.config.js`:
 
 ```json
 {
@@ -45,51 +63,48 @@ Add the config plugin to your Expo config:
 }
 ```
 
-Then run prebuild for native changes:
+**3. Prebuild and run**
 
 ```bash
-bunx expo prebuild
+npx expo prebuild
+npx expo run:ios     # or run:android
 ```
 
-What the plugin does:
+<details>
+<summary><b>What does the config plugin do?</b></summary>
 
-- iOS
-  - sets the deployment target to iOS 16
-  - adds the `SplineRuntime` Swift package from `https://github.com/splinetool/spline-ios`
-  - updates Podfile framework search paths so the Expo module can import `SplineRuntime`
-- Android
-  - adds `design.spline:spline-runtime:0.2.3`
-  - adds `androidx.lifecycle:lifecycle-common-java8:2.6.2`
-  - adds `androidx.lifecycle:lifecycle-runtime-ktx:2.6.2`
-  - ensures `INTERNET` and `ACCESS_NETWORK_STATE` permissions are present
+<br />
 
-### Bare React Native projects with Expo modules
+**iOS**
 
-First install and configure Expo modules if you have not already:
+- sets the deployment target to iOS 16.0 (Podfile properties + Xcode project)
+- adds the [`SplineRuntime`](https://github.com/splinetool/spline-ios) Swift Package to your Xcode project
+- patches Podfile framework search paths so the module can `import SplineRuntime`
 
-- [Expo modules in bare React Native](https://docs.expo.dev/bare/installing-expo-modules/)
+**Android**
 
-Install the package:
+- adds `design.spline:spline-runtime:0.2.3`
+- adds `androidx.lifecycle:lifecycle-common-java8:2.6.2` and `androidx.lifecycle:lifecycle-runtime-ktx:2.6.2`
+- ensures `INTERNET` and `ACCESS_NETWORK_STATE` permissions are declared
+
+Everything is idempotent — re-running prebuild never duplicates entries.
+
+</details>
+
+<details>
+<summary><b>Using bare React Native (no prebuild)?</b></summary>
+
+<br />
+
+First [install Expo Modules](https://docs.expo.dev/bare/installing-expo-modules/), then apply the native setup by hand:
+
+**iOS** — add the `SplineRuntime` Swift Package (`https://github.com/splinetool/spline-ios`) in Xcode, set your deployment target to 16.0+, then:
 
 ```bash
-bun add react-native-spline
+npx pod-install
 ```
 
-Then apply the equivalent native setup.
-
-#### iOS
-
-- add the `SplineRuntime` Swift package to your Xcode project
-- ensure your iOS deployment target is 16.0 or newer
-- run:
-
-```bash
-bunx pod-install
-```
-
-#### Android
-
-Add these dependencies to your library or app module:
+**Android** — add to your app module's `build.gradle`:
 
 ```gradle
 dependencies {
@@ -99,23 +114,25 @@ dependencies {
 }
 ```
 
-Also declare:
+and declare in `AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
+</details>
+
 ## Quick Start
 
 ```tsx
 import { useEffect, useState } from 'react';
+import { SafeAreaView, Text } from 'react-native';
 import {
   SplineView,
   useSpline,
   type SplineEventPayload,
 } from 'react-native-spline';
-import { SafeAreaView, Text } from 'react-native';
 
 export default function App() {
   const { addEventListener, emitEvent } = useSpline();
@@ -145,73 +162,52 @@ export default function App() {
 
 ## API
 
-### `SplineView`
+### `<SplineView />`
 
-Props:
+The component that renders your scene.
 
-- `url: string`
-- `onLoad: ({ nativeEvent: { url } }) => void`
-- `onSplineEvent?: ({ nativeEvent }) => void`
-- `useDeviceGyroscopeForLookAt?: boolean`
-- `gyroscopeLookAtObjectIds?: string[]`
-- `style?: StyleProp<ViewStyle>`
-
-Example:
-
-```tsx
-<SplineView
-  url="https://build.spline.design/MEB5dcTLGkXFu2uqul4b/scene.splineswift"
-  onLoad={({ nativeEvent }) => console.log('Loaded', nativeEvent.url)}
-  onSplineEvent={({ nativeEvent }) => console.log(nativeEvent.event)}
-  style={{ flex: 1 }}
-/>
-```
+| Prop | Type | Description |
+| --- | --- | --- |
+| `url` | `string` | **Required.** Hosted `.splineswift` scene URL. |
+| `onLoad` | `(event) => void` | **Required.** Fires when the scene finishes loading. `event.nativeEvent.url` echoes the scene URL. |
+| `onSplineEvent` | `(event) => void` | Fires for every Spline interaction event (`event.nativeEvent` is a [`SplineEventPayload`](#events)). |
+| `useDeviceGyroscopeForLookAt` | `boolean` | iOS only, default `true`. Drives "Look At" objects with device motion. |
+| `gyroscopeLookAtObjectIds` | `string[]` | Explicit object UUIDs to drive with the gyroscope (skips scene auto-detection). |
+| `style` | `StyleProp<ViewStyle>` | Standard view styling. |
 
 ### `useSpline()`
 
-Returns scene controls for the currently active native Spline view:
+A hook returning stable, memoized controls for the active scene — mirrors Spline's [Code API](https://docs.spline.design/exporting-your-scene/apple-platform/code-api-for-swift-ui#api).
 
-- `emitEvent(event, nameOrUUID)`
-- `emitEventReverse(event, nameOrUUID)`
-- `findObjectById(id)`
-- `findObjectByName(name)`
-- `setZoom(value)`
-- `setObjectRotation(nameOrUUID, rotation)`
-- `setBackgroundColor({ r, g, b, a })`
-- `play()`
-- `stop()`
-- `addEventListener(event, callback)`
-
-Supported event names:
-
-- `mouseUp`
-- `mouseDown`
-- `mousePress`
-- `mouseHover`
-- `keyUp`
-- `keyDown`
-- `keyPress`
-- `start`
-- `lookAt`
-- `follow`
-
-Example:
+| Method | Signature | Description |
+| --- | --- | --- |
+| `emitEvent` | `(event, nameOrUUID) => void` | Trigger an interaction event on an object. |
+| `emitEventReverse` | `(event, nameOrUUID) => void` | Trigger the event's reverse animation. |
+| `findObjectById` | `(uuid) => Promise<SplineObject \| null>` | Look up an object by UUID. |
+| `findObjectByName` | `(name) => Promise<SplineObject \| null>` | Look up an object by name. |
+| `setObjectRotation` | `(nameOrUUID, { x, y, z }) => void` | Set an object's rotation (radians). |
+| `setZoom` | `(value) => void` | Set the camera zoom level. |
+| `setBackgroundColor` | `({ r, g, b, a }) => void` | Set the scene background (RGBA, 0–255). |
+| `play` / `stop` | `() => void` | Resume / pause scene playback. |
+| `addEventListener` | `(event, callback) => Subscription` | Subscribe to a scene event. Call `.remove()` on cleanup. |
 
 ```tsx
-const { setZoom, play, stop, findObjectByName } = useSpline();
+const { setZoom, play, findObjectByName } = useSpline();
 
 async function focusScene() {
   setZoom(1.2);
   play();
-
   const cube = await findObjectByName('Cube');
   console.log(cube?.rotation);
 }
 ```
 
+> [!TIP]
+> Scene methods act on the currently loaded view. Call them after `onLoad`, or from event handlers and effects that run once the scene is mounted.
+
 ### `useVariable()`
 
-`useVariable()` works like `useState`, but syncs with a Spline scene variable.
+`useState`, but wired to a Spline scene variable. Reads the native value on mount, then keeps React state and the scene in sync on every set.
 
 ```tsx
 const [opacity, setOpacity] = useVariable<number>('opacity', 1);
@@ -219,70 +215,77 @@ const [visible, setVisible] = useVariable<boolean>('visible', true);
 const [label, setLabel] = useVariable<string>('label', '');
 ```
 
-## Spline Scene Notes
+### Events
 
-- Use hosted `.splineswift` scene URLs for native embeds.
-- Scene methods depend on the active loaded view. Call scene APIs after `onLoad` or from event handlers/effects once the scene is mounted.
-- Object and variable names should match what you configured in Spline.
-- On iOS, gyroscope-driven look-at support is enabled by default and only runs when compatible objects are found.
+`SplineEventPayload` — `{ event, objectName?, objectId? }`
+
+Supported events: `mouseUp` · `mouseDown` · `mousePress` · `mouseHover` · `keyUp` · `keyDown` · `keyPress` · `start` · `lookAt` · `follow`
+
+### Gyroscope look-at (iOS)
+
+If your scene has objects with a cursor **Look At** interaction, `SplineView` decodes the `.splineswift` file, finds them automatically, and rotates them with device motion — so a character that follows the cursor on the web follows the phone's tilt in your app. Disable with `useDeviceGyroscopeForLookAt={false}`, or pin specific objects with `gyroscopeLookAtObjectIds`.
 
 ## Example App
 
-The repository includes an Expo example app in [example/](./example).
-
-Useful commands:
+A full Expo example lives in [`example/`](./example):
 
 ```bash
-bun run start:ios
-bun run start:android
+bun install
+bun run start:ios      # or start:android
 ```
 
-## Repository Layout
+## Troubleshooting
 
-```text
-src/            JavaScript and TypeScript public API
-ios/            iOS Expo module and SwiftUI Spline bridge
-android/        Android Expo module and native Spline bridge
-plugin/         Expo config plugin source and built output
-example/        Expo example app
-```
+<details>
+<summary><code>import SplineRuntime</code> fails on iOS</summary>
+
+Re-run `npx expo prebuild --clean` so the config plugin can patch the freshly generated project, then reopen the workspace and build once from Xcode to let SPM resolve packages.
+
+</details>
+
+<details>
+<summary>Scene doesn't load / blank view</summary>
+
+Make sure the URL is a **`.splineswift`** export (not `.splinecode`, which is the web export) and that the device has network access. The scene must be hosted (Spline's "Export → Code → Swift" gives you the URL).
+
+</details>
+
+<details>
+<summary>Android build errors about lifecycle classes</summary>
+
+Verify the config plugin ran (check `android/app/build.gradle` for the `design.spline:spline-runtime` dependency). If you manage native projects manually, add the three Gradle dependencies listed in the bare setup section.
+
+</details>
 
 ## Contributing
 
-This repository uses `bun` for package management.
+PRs welcome! This repo uses **bun**, **Biome**, and **Conventional Commits** (enforced by commitlint).
 
 ```bash
-# Install dependencies
-bun install
-
-# Build TypeScript output
-bun run build
-
-# Run tests
-bun test
-
-# Lint
-bun run lint
-
-# Format
-bun run format
-
-# Run example apps
-bun run start:ios
-bun run start:android
+bun install        # install deps
+bun run check      # lint + typecheck
+bun run test       # jest
+bun run build      # compile to build/
 ```
 
-Additional notes:
+Repository layout:
 
-- TypeScript output is generated into `build/`
-- the Expo config plugin source lives in `plugin/src`
-- if you change the plugin source, rebuild the plugin output so `plugin/build` stays in sync
-- Android native integration depends on the pinned Spline runtime and AndroidX lifecycle dependencies documented above
+```text
+src/       TypeScript public API (SplineView, useSpline, useVariable)
+ios/       Swift Expo module bridging SplineRuntime
+android/   Kotlin Expo module bridging the Android Spline runtime
+plugin/    Expo config plugin (SPM + Gradle + permissions injection)
+example/   Expo example app
+```
 
-## Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for a list of changes and release notes. This project follows [Semantic Versioning](https://semver.org/) and uses [Conventional Commits](https://www.conventionalcommits.org/) to automatically generate the changelog.
+Releases are automated with [semantic-release](https://github.com/semantic-release/semantic-release) — merge to `main` with a conventional commit and CI handles versioning, changelog, npm publish, and the GitHub release.
 
 ## License
 
-MIT
+[MIT](./LICENSE) © [Emmanuel De Freitas](https://github.com/emmanuel-defreitas)
+
+---
+
+<div align="center">
+<sub>Built with <a href="https://docs.expo.dev/modules/overview/">Expo Modules</a> · Powered by <a href="https://spline.design">Spline</a> · Not affiliated with Spline</sub>
+</div>

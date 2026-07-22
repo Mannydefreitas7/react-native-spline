@@ -1,16 +1,9 @@
 {
-  "platforms": [
-    "apple",
-    "android"
-  ],
+  "platforms": ["apple", "android"],
   "apple": {
-    "modules": [
-      "ReactNativeSplineModule"
-    ]
+    "modules": ["ReactNativeSplineModule"]
   },
   "android": {
-    "modules": [
-      "expo.modules.spline.ReactNativeSplineModule"
-    ]
+    "modules": ["expo.modules.spline.ReactNativeSplineModule"]
   }
 }

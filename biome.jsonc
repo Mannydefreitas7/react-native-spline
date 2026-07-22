@@ -1,12 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.5.5/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
         "noVoid": "error",
@@ -16,7 +14,8 @@
         "noUnusedImports": "error",
         "noUnusedVariables": "error",
         "noUnusedFunctionParameters": "warn",
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "error",
+        "noSwitchDeclarations": "off"
       },
       "performance": {
         "noAccumulatingSpread": "warn",
@@ -37,18 +36,12 @@
           "level": "warn",
           "options": {
             "requireAscii": true,
-            "filenameCases": [
-              "camelCase",
-              "PascalCase",
-              "kebab-case"
-            ]
+            "filenameCases": ["camelCase", "PascalCase", "kebab-case"]
           }
         },
         "useForOf": "warn",
         "useFragmentSyntax": "warn",
-        "useShorthandArrayType": "warn",
-        "useShorthandAssign": "warn",
-        "useSingleCaseStatement": "off"
+        "useShorthandAssign": "warn"
       },
       "suspicious": {
         "noConsole": "warn",
@@ -58,17 +51,8 @@
         "useSortedClasses": {
           "level": "warn",
           "options": {
-            "attributes": [
-              "className",
-              "class",
-              "style"
-            ],
-            "functions": [
-              "clsx",
-              "cn",
-              "cva",
-              "twMerge"
-            ]
+            "attributes": ["className", "class", "style"],
+            "functions": ["clsx", "cn", "cva", "twMerge"]
           }
         }
       }
@@ -95,9 +79,7 @@
       "bracketSameLine": false,
       "attributePosition": "auto"
     },
-    "globals": [
-      "JSX"
-    ]
+    "globals": ["JSX"]
   },
   "json": {
     "formatter": {
@@ -124,24 +106,22 @@
     "defaultBranch": "master"
   },
   "files": {
-    "include": [
-      "src/**/*",
-      "plugin/**/*",
+    "includes": [
+      "**/src/**/*",
+      "**/plugin/**/*",
       "**/*.ts",
       "**/*.tsx",
       "**/*.js",
       "**/*.jsx",
       "**/*.json",
-      "**/*.jsonc"
-    ],
-    "ignore": [
-      "build/**/*",
-      "node_modules/**/*",
-      "example/**/*",
-      "ios/**/*",
-      "android/**/*",
-      "*.lock",
-      "bun.lock"
+      "**/*.jsonc",
+      "!**/build/**/*",
+      "!**/node_modules/**/*",
+      "!**/example/**/*",
+      "!**/ios/**/*",
+      "!**/android/**/*",
+      "!**/*.lock",
+      "!**/bun.lock"
     ]
   }
 }
