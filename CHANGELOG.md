@@ -1,3 +1,15 @@
+## 1.0.0 (2026-07-22)
+
+### ✨ Features
+
+* add useSpline() hook ([ad1fcb5](https://github.com/emmanuel-defreitas/react-native-spline/commit/ad1fcb5a5305625fef916aa6899c7a963dab0b81))
+
+### 🐛 Bug Fixes
+
+* **ci:** run semantic-release on node 24 ([#8](https://github.com/emmanuel-defreitas/react-native-spline/issues/8)) ([e1d4ee9](https://github.com/emmanuel-defreitas/react-native-spline/commit/e1d4ee959a2f4600401e8d289f12e7d360fb3474))
+* **ci:** stop setup-node from shadowing the semantic-release npmrc ([#9](https://github.com/emmanuel-defreitas/react-native-spline/issues/9)) ([09b8170](https://github.com/emmanuel-defreitas/react-native-spline/commit/09b817002688e08e07cc6f48851da00067462a09))
+* **meta:** update repository owner references to emmanuel-defreitas ([#7](https://github.com/emmanuel-defreitas/react-native-spline/issues/7)) ([d8e3d3c](https://github.com/emmanuel-defreitas/react-native-spline/commit/d8e3d3c376397de85c89ce2e24372a4c9bec679c))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
