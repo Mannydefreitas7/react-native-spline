@@ -91,11 +91,14 @@ jobs:
         with:
           bun-version: latest
 
+      # No registry-url here on purpose: it makes setup-node write an .npmrc
+      # containing a placeholder NODE_AUTH_TOKEN and point NPM_CONFIG_USERCONFIG
+      # at it, which overrides the .npmrc @semantic-release/npm builds from
+      # NPM_TOKEN and causes EINVALIDNPMTOKEN.
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
