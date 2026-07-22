@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
     :ios => '16.0'
   }
   s.swift_version  = '5.9'
-  s.source         = { git: 'https://github.com/Mannydefreitas7/react-native-spline' }
+  s.source         = { git: 'https://github.com/emmanuel-defreitas/react-native-spline' }
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'

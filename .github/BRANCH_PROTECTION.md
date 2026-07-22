@@ -124,7 +124,7 @@ gh api \
   -f 'rules[4][parameters][required_status_checks][][context]=Build'
 ```
 
-> **Note:** Replace `OWNER/REPO` with your repository (e.g., `Mannydefreitas7/react-native-spline`)
+> **Note:** Replace `OWNER/REPO` with your repository (e.g., `emmanuel-defreitas/react-native-spline`)
 
 ## Commit Message Enforcement
 
