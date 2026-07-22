@@ -7,7 +7,7 @@ Thank you for your interest in contributing! This document outlines the process 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Mannydefreitas7/react-native-spline.git
+   git clone https://github.com/emmanuel-defreitas/react-native-spline.git
    cd react-native-spline
    ```
 
